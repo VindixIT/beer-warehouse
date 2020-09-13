@@ -1,12 +1,39 @@
 Action: "Criar" {Cliente}
-Status: 1.Aberto
+Status: 1.Aberto {Start}
 Action: "Disponibilizar" {Vendedor}
-Status: 2.Pronto para retirada
+Status: 2.Pronto
 Action: "Cancelar" {Cliente}
-Status: 0.Cancelado {Cliente} {1,2}
+Status: 0.Cancelado {Cliente} {1,2} {End}
 Action: "Finalizar" {Vendedor}
-Status: 3.Entregue
+Status: 3.Entregue {End}
+	
+	1S - 2 - 3E
+	1S - 0E
+	1S - 2 - 0E
+	
+{{Action}}
+nome: "Disponibilizar"
+papel: Vendedor, Admin
+{status origem}: Aberto
+{status destino}: Pronto
 
+{{Action}}
+nome: "Cancelar"
+[]exceto
+{status origem}: {{!}} Entregue
+{status destino}: Cancelado
+papel: Cliente, Admin
+
+{{Workflow "Pedido" -> Entity: "order"}}
+Actions
+{Disponibilizar,Finalizar,Cancelar}
+Status: Rascunho ou Publicado
+[Criar]
+[Salvar]
+[Publicar] 
+Id,Nome,Início,Fim
+"Erro: Descontinuidade no fluxo" 
+"Erro: Estereótipo 'Start' duplicado"
 
 // Reservado (Sem data de entrega definida)
 Funcionalidade
@@ -27,3 +54,29 @@ Permitir definir o papel ao qual o Usuário pertence.
 
 TODO
 - Criar a função JS loadFeaturesByRoleId()
+
+
+
+
+Order -> Item
+Workflow -> {{Activities}}
+
+{{Activity}}
+01 {{Action}} "Disponibilizar"
+Start At (Data) 13/09/20
+End At (Data) 30/09/20
+{{Roles}}: Vendedor, Admin
+
+{{Action}}
+nome: "Disponibilizar"
+{status origem}: Aberto
+{status destino}: Pronto
+
+InSolIT
+
+
+W1O1 1/1/20 1/2/20
+W2O1 1/2/20 9/9/20
+W3O1 9/9/20 10/9/20
+W4O1 10/09/20 NULO
+

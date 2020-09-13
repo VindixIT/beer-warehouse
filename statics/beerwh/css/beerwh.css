@@ -20,23 +20,23 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #20B2AA;
+  background-color: #B57400;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 60px;
+  padding-top: 175px;
 }
 
 .sidenav a {
   padding: 8px 8px 8px 32px;
   text-decoration: none;
-  font-size: 25px;
-  color: rgb(0, 255, 255);
+  font-size: 20px;
+  color: #E2C454;
   display: block;
   transition: 0.3s;
 }
 
 .sidenav a:hover {
-  color: #f1f1f1;
+  color: #fdfdfd;
 }
 
 .sidenav .closebtn {
@@ -50,6 +50,17 @@ body {
 #main {
   transition: margin-left .5s;
   padding: 16px;
+}
+
+.sidenav .logo {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width:200px;
+  margin-top:10px;
+  margin-right: 10px;
+  font-size: 20px;
+  border-radius:50%!important
 }
 
 @media screen and (max-height: 450px) {

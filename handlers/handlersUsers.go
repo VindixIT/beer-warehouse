@@ -133,6 +133,7 @@ func ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 	page.Users = users
 	page.Roles = roles
 	page.Title = "Usuários"
+	page.LoggedUser = BuildLoggedUser(GetUserInCookie(w, r))
 	var tmpl = template.Must(template.ParseGlob("tiles/users/*"))
 	tmpl.ParseGlob("tiles/*")
 	tmpl.ExecuteTemplate(w, "Main-Users", page)

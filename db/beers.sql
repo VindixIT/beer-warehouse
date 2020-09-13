@@ -5,7 +5,7 @@
 -- Dumped from database version 11.1
 -- Dumped by pg_dump version 11.1
 
--- Started on 2020-09-09 15:51:14
+-- Started on 2020-09-12 22:25:47
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -32,6 +32,85 @@ CREATE SEQUENCE public.actions_id_seq
 
 ALTER TABLE public.actions_id_seq OWNER TO postgres;
 
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 216 (class 1259 OID 700788)
+-- Name: actions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.actions (
+    id integer DEFAULT nextval('public.actions_id_seq'::regclass) NOT NULL,
+    name character varying(255) NOT NULL,
+    origin_status_id integer,
+    destination_status_id integer,
+    other_than boolean
+);
+
+
+ALTER TABLE public.actions OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 700828)
+-- Name: actions_status_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.actions_status_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.actions_status_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 700830)
+-- Name: actions_status; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.actions_status (
+    id integer DEFAULT nextval('public.actions_status_id_seq'::regclass) NOT NULL,
+    action_id integer,
+    origin_status_id integer,
+    destination_status_id integer
+);
+
+
+ALTER TABLE public.actions_status OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 700774)
+-- Name: activities_roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.activities_roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.activities_roles_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 700804)
+-- Name: activities_roles; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.activities_roles (
+    id integer DEFAULT nextval('public.activities_roles_id_seq'::regclass),
+    activity_id integer,
+    role_id integer
+);
+
+
+ALTER TABLE public.activities_roles OWNER TO postgres;
+
 --
 -- TOC entry 202 (class 1259 OID 700663)
 -- Name: beers_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -46,10 +125,6 @@ CREATE SEQUENCE public.beers_id_seq
 
 
 ALTER TABLE public.beers_id_seq OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- TOC entry 207 (class 1259 OID 700675)
@@ -237,8 +312,7 @@ ALTER TABLE public.status_id_seq OWNER TO postgres;
 CREATE TABLE public.status (
     id integer DEFAULT nextval('public.status_id_seq'::regclass) NOT NULL,
     name character varying(255) NOT NULL,
-    stereotype character varying(255),
-    workflow_id integer
+    stereotype character varying(255)
 );
 
 
@@ -299,124 +373,193 @@ ALTER TABLE public.workflows_id_seq OWNER TO postgres;
 
 CREATE TABLE public.workflows (
     id integer DEFAULT nextval('public.workflows_id_seq'::regclass) NOT NULL,
-    name character varying(255) NOT NULL
+    name character varying(255) NOT NULL,
+    entity_type character varying(30),
+    start_at timestamp without time zone,
+    end_at timestamp without time zone
 );
 
 
 ALTER TABLE public.workflows OWNER TO postgres;
 
 --
--- TOC entry 2906 (class 0 OID 700675)
+-- TOC entry 2948 (class 0 OID 700788)
+-- Dependencies: 216
+-- Data for Name: actions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.actions (id, name, origin_status_id, destination_status_id, other_than) VALUES (5, 'Disponibilizar', 7, 8, false);
+INSERT INTO public.actions (id, name, origin_status_id, destination_status_id, other_than) VALUES (6, 'Cancelar', 9, 10, true);
+INSERT INTO public.actions (id, name, origin_status_id, destination_status_id, other_than) VALUES (7, 'Entregar', 8, 9, false);
+
+
+--
+-- TOC entry 2951 (class 0 OID 700830)
+-- Dependencies: 219
+-- Data for Name: actions_status; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.actions_status (id, action_id, origin_status_id, destination_status_id) VALUES (1, 5, 7, 8);
+INSERT INTO public.actions_status (id, action_id, origin_status_id, destination_status_id) VALUES (2, 6, 9, 10);
+INSERT INTO public.actions_status (id, action_id, origin_status_id, destination_status_id) VALUES (3, 7, 8, 9);
+
+
+--
+-- TOC entry 2949 (class 0 OID 700804)
+-- Dependencies: 217
+-- Data for Name: activities_roles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 2939 (class 0 OID 700675)
 -- Dependencies: 207
 -- Data for Name: beers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.beers (id, name, qtd, price) FROM stdin;
-1	Molson	100	100
-\.
+INSERT INTO public.beers (id, name, qtd, price) VALUES (1, 'Molson', 100, 100);
 
 
 --
--- TOC entry 2910 (class 0 OID 700694)
+-- TOC entry 2943 (class 0 OID 700694)
 -- Dependencies: 211
 -- Data for Name: features; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.features (id, name, code) FROM stdin;
-1	Listar Cervejas	listBeers
-2	Criar Cerveja	createBeer
-3	Listar Workflows	listWorkflows
-4	Criar Workflow	createWorkflow
-\.
+INSERT INTO public.features (id, name, code) VALUES (1, 'Listar Cervejas', 'listBeers');
+INSERT INTO public.features (id, name, code) VALUES (2, 'Criar Cerveja', 'createBeer');
+INSERT INTO public.features (id, name, code) VALUES (3, 'Listar Workflows', 'listWorkflows');
+INSERT INTO public.features (id, name, code) VALUES (4, 'Criar Workflow', 'createWorkflow');
+INSERT INTO public.features (id, name, code) VALUES (5, 'Listar Pedidos', 'listOrders');
+INSERT INTO public.features (id, name, code) VALUES (6, 'Criar Pedido', 'createOrder');
+INSERT INTO public.features (id, name, code) VALUES (7, 'Listar Usuários', 'listUsers');
+INSERT INTO public.features (id, name, code) VALUES (8, 'Criar Usuário', 'createUser');
+INSERT INTO public.features (id, name, code) VALUES (9, 'Listar Papéis', 'listRoles');
+INSERT INTO public.features (id, name, code) VALUES (11, 'Listar Status', 'listStatus');
+INSERT INTO public.features (id, name, code) VALUES (12, 'Criar Status', 'createStatus');
+INSERT INTO public.features (id, name, code) VALUES (13, 'Listar Funcionalidades', 'listFeatures');
+INSERT INTO public.features (id, name, code) VALUES (14, 'Criar Funcionalidade', 'createFeature');
+INSERT INTO public.features (id, name, code) VALUES (15, 'Listar Ações', 'listActions');
+INSERT INTO public.features (id, name, code) VALUES (16, 'Criar Ação', 'createAction');
+INSERT INTO public.features (id, name, code) VALUES (10, 'Criar Papel', 'createRole');
 
 
 --
--- TOC entry 2905 (class 0 OID 700671)
+-- TOC entry 2938 (class 0 OID 700671)
 -- Dependencies: 206
 -- Data for Name: features_roles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.features_roles (id, feature_id, role_id) FROM stdin;
-1	1	12
-2	3	12
-\.
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (1, 1, 12);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (10, 2, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (11, 4, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (12, 1, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (14, 16, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (15, 14, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (16, 10, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (18, 12, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (19, 8, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (23, 5, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (30, 5, 12);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (33, 3, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (34, 6, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (35, 7, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (36, 9, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (37, 11, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (38, 13, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (39, 15, 1);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (40, 6, 12);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (41, 2, 14);
+INSERT INTO public.features_roles (id, feature_id, role_id) VALUES (42, 5, 14);
 
 
 --
--- TOC entry 2912 (class 0 OID 700708)
+-- TOC entry 2945 (class 0 OID 700708)
 -- Dependencies: 213
 -- Data for Name: items; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.items (id, quantity, beer_id, price, item_value, order_id) FROM stdin;
-\.
 
 
 --
--- TOC entry 2913 (class 0 OID 700712)
+-- TOC entry 2946 (class 0 OID 700712)
 -- Dependencies: 214
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.orders (id, user_id, ordered_at, take_out_at) FROM stdin;
-\.
 
 
 --
--- TOC entry 2909 (class 0 OID 700690)
+-- TOC entry 2942 (class 0 OID 700690)
 -- Dependencies: 210
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.roles (id, name) FROM stdin;
-1	Admin
-12	Cliente
-\.
+INSERT INTO public.roles (id, name) VALUES (1, 'Admin');
+INSERT INTO public.roles (id, name) VALUES (12, 'Cliente');
+INSERT INTO public.roles (id, name) VALUES (14, 'Vendedor');
 
 
 --
--- TOC entry 2908 (class 0 OID 700683)
+-- TOC entry 2941 (class 0 OID 700683)
 -- Dependencies: 209
 -- Data for Name: status; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.status (id, name, stereotype, workflow_id) FROM stdin;
-\.
+INSERT INTO public.status (id, name, stereotype) VALUES (7, 'Aberto', 'Start');
+INSERT INTO public.status (id, name, stereotype) VALUES (8, 'Pronto para Entrega', '');
+INSERT INTO public.status (id, name, stereotype) VALUES (9, 'Entregue', 'End');
+INSERT INTO public.status (id, name, stereotype) VALUES (10, 'Cancelado', 'End');
 
 
 --
--- TOC entry 2911 (class 0 OID 700701)
+-- TOC entry 2944 (class 0 OID 700701)
 -- Dependencies: 212
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.users (id, username, password, email, mobile, name, role_id) FROM stdin;
-1	aria	$2a$14$C1DIYDsmE0QHjje4wR5uwOAC7m8/YAUe8DYw/yuKIAQgRDibeCDMy	aria@vindixit.com	61 984385415	Ária Ohashi	1
-3	masaru	$2a$10$GyDuBNP/nnToLQZzN88Is.O0iJxGfBpOOeWkbRyKYM1iU58pCpU8e	masaru@vindixit.com	61 984385415	Masaru Ohashi Júnior	1
-\.
+INSERT INTO public.users (id, username, password, email, mobile, name, role_id) VALUES (1, 'aria', '$2a$14$C1DIYDsmE0QHjje4wR5uwOAC7m8/YAUe8DYw/yuKIAQgRDibeCDMy', 'aria@vindixit.com', '61 984385415', 'Ária Ohashi', 1);
+INSERT INTO public.users (id, username, password, email, mobile, name, role_id) VALUES (3, 'masaru', '$2a$10$GyDuBNP/nnToLQZzN88Is.O0iJxGfBpOOeWkbRyKYM1iU58pCpU8e', 'masaru@vindixit.com', '61 984385415', 'Masaru Ohashi Júnior', 12);
 
 
 --
--- TOC entry 2907 (class 0 OID 700679)
+-- TOC entry 2940 (class 0 OID 700679)
 -- Dependencies: 208
 -- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.workflows (id, name) FROM stdin;
-\.
 
 
 --
--- TOC entry 2919 (class 0 OID 0)
+-- TOC entry 2957 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: actions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.actions_id_seq', 1, false);
+SELECT pg_catalog.setval('public.actions_id_seq', 7, true);
 
 
 --
--- TOC entry 2920 (class 0 OID 0)
+-- TOC entry 2958 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: actions_status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.actions_status_id_seq', 3, true);
+
+
+--
+-- TOC entry 2959 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: activities_roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.activities_roles_id_seq', 21, true);
+
+
+--
+-- TOC entry 2960 (class 0 OID 0)
 -- Dependencies: 202
 -- Name: beers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -425,61 +568,61 @@ SELECT pg_catalog.setval('public.beers_id_seq', 1, false);
 
 
 --
--- TOC entry 2921 (class 0 OID 0)
+-- TOC entry 2961 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: features_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.features_id_seq', 4, true);
+SELECT pg_catalog.setval('public.features_id_seq', 16, true);
 
 
 --
--- TOC entry 2922 (class 0 OID 0)
+-- TOC entry 2962 (class 0 OID 0)
 -- Dependencies: 196
 -- Name: features_roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.features_roles_id_seq', 4, true);
+SELECT pg_catalog.setval('public.features_roles_id_seq', 42, true);
 
 
 --
--- TOC entry 2923 (class 0 OID 0)
+-- TOC entry 2963 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.items_id_seq', 1, false);
+SELECT pg_catalog.setval('public.items_id_seq', 1, true);
 
 
 --
--- TOC entry 2924 (class 0 OID 0)
+-- TOC entry 2964 (class 0 OID 0)
 -- Dependencies: 205
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.orders_id_seq', 1, false);
+SELECT pg_catalog.setval('public.orders_id_seq', 1, true);
 
 
 --
--- TOC entry 2925 (class 0 OID 0)
+-- TOC entry 2965 (class 0 OID 0)
 -- Dependencies: 200
 -- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.roles_id_seq', 13, true);
+SELECT pg_catalog.setval('public.roles_id_seq', 14, true);
 
 
 --
--- TOC entry 2926 (class 0 OID 0)
+-- TOC entry 2966 (class 0 OID 0)
 -- Dependencies: 198
 -- Name: status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.status_id_seq', 1, false);
+SELECT pg_catalog.setval('public.status_id_seq', 10, true);
 
 
 --
--- TOC entry 2927 (class 0 OID 0)
+-- TOC entry 2967 (class 0 OID 0)
 -- Dependencies: 203
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -488,7 +631,7 @@ SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 
 
 --
--- TOC entry 2928 (class 0 OID 0)
+-- TOC entry 2968 (class 0 OID 0)
 -- Dependencies: 197
 -- Name: workflows_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -497,7 +640,43 @@ SELECT pg_catalog.setval('public.workflows_id_seq', 1, false);
 
 
 --
--- TOC entry 2750 (class 2606 OID 700717)
+-- TOC entry 2789 (class 2606 OID 700809)
+-- Name: activities_roles action_role_unique_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.activities_roles
+    ADD CONSTRAINT action_role_unique_key UNIQUE (activity_id, role_id);
+
+
+--
+-- TOC entry 2791 (class 2606 OID 700835)
+-- Name: actions_status action_status_unique_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions_status
+    ADD CONSTRAINT action_status_unique_key UNIQUE (action_id, origin_status_id, destination_status_id);
+
+
+--
+-- TOC entry 2787 (class 2606 OID 700793)
+-- Name: actions actions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions
+    ADD CONSTRAINT actions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2793 (class 2606 OID 700852)
+-- Name: actions_status actions_status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions_status
+    ADD CONSTRAINT actions_status_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2769 (class 2606 OID 700717)
 -- Name: beers beers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -506,7 +685,7 @@ ALTER TABLE ONLY public.beers
 
 
 --
--- TOC entry 2748 (class 2606 OID 700763)
+-- TOC entry 2767 (class 2606 OID 700763)
 -- Name: features_roles feature_role_unique_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -515,7 +694,7 @@ ALTER TABLE ONLY public.features_roles
 
 
 --
--- TOC entry 2758 (class 2606 OID 700721)
+-- TOC entry 2777 (class 2606 OID 700721)
 -- Name: features features_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -524,7 +703,7 @@ ALTER TABLE ONLY public.features
 
 
 --
--- TOC entry 2764 (class 2606 OID 700723)
+-- TOC entry 2783 (class 2606 OID 700723)
 -- Name: items items_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -533,7 +712,7 @@ ALTER TABLE ONLY public.items
 
 
 --
--- TOC entry 2766 (class 2606 OID 700725)
+-- TOC entry 2785 (class 2606 OID 700725)
 -- Name: orders order_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -542,7 +721,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 2756 (class 2606 OID 700719)
+-- TOC entry 2775 (class 2606 OID 700719)
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -551,7 +730,7 @@ ALTER TABLE ONLY public.roles
 
 
 --
--- TOC entry 2754 (class 2606 OID 700731)
+-- TOC entry 2773 (class 2606 OID 700731)
 -- Name: status status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -560,7 +739,7 @@ ALTER TABLE ONLY public.status
 
 
 --
--- TOC entry 2760 (class 2606 OID 700765)
+-- TOC entry 2779 (class 2606 OID 700765)
 -- Name: users username_unique_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -569,7 +748,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2762 (class 2606 OID 700727)
+-- TOC entry 2781 (class 2606 OID 700727)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -578,7 +757,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2752 (class 2606 OID 700729)
+-- TOC entry 2771 (class 2606 OID 700729)
 -- Name: workflows workflows_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -587,7 +766,25 @@ ALTER TABLE ONLY public.workflows
 
 
 --
--- TOC entry 2771 (class 2606 OID 700732)
+-- TOC entry 2804 (class 2606 OID 700836)
+-- Name: actions_status actions_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions_status
+    ADD CONSTRAINT actions_fkey FOREIGN KEY (action_id) REFERENCES public.actions(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2803 (class 2606 OID 700810)
+-- Name: activities_roles activities_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.activities_roles
+    ADD CONSTRAINT activities_fkey FOREIGN KEY (activity_id) REFERENCES public.actions(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2797 (class 2606 OID 700732)
 -- Name: items beers_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -596,7 +793,25 @@ ALTER TABLE ONLY public.items
 
 
 --
--- TOC entry 2767 (class 2606 OID 700747)
+-- TOC entry 2800 (class 2606 OID 700794)
+-- Name: actions destination_status_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions
+    ADD CONSTRAINT destination_status_fkey FOREIGN KEY (destination_status_id) REFERENCES public.status(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2806 (class 2606 OID 700846)
+-- Name: actions_status destination_status_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions_status
+    ADD CONSTRAINT destination_status_fkey FOREIGN KEY (destination_status_id) REFERENCES public.status(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2794 (class 2606 OID 700747)
 -- Name: features_roles features_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -605,7 +820,7 @@ ALTER TABLE ONLY public.features_roles
 
 
 --
--- TOC entry 2772 (class 2606 OID 700737)
+-- TOC entry 2798 (class 2606 OID 700737)
 -- Name: items orders_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -614,7 +829,25 @@ ALTER TABLE ONLY public.items
 
 
 --
--- TOC entry 2770 (class 2606 OID 700766)
+-- TOC entry 2801 (class 2606 OID 700799)
+-- Name: actions origin_status_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions
+    ADD CONSTRAINT origin_status_fkey FOREIGN KEY (origin_status_id) REFERENCES public.status(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2805 (class 2606 OID 700841)
+-- Name: actions_status origin_status_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.actions_status
+    ADD CONSTRAINT origin_status_fkey FOREIGN KEY (origin_status_id) REFERENCES public.status(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2796 (class 2606 OID 700766)
 -- Name: users role_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -623,7 +856,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2768 (class 2606 OID 700752)
+-- TOC entry 2795 (class 2606 OID 700752)
 -- Name: features_roles roles_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -632,7 +865,16 @@ ALTER TABLE ONLY public.features_roles
 
 
 --
--- TOC entry 2773 (class 2606 OID 700742)
+-- TOC entry 2802 (class 2606 OID 700815)
+-- Name: activities_roles roles_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.activities_roles
+    ADD CONSTRAINT roles_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2799 (class 2606 OID 700742)
 -- Name: orders users_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -640,16 +882,7 @@ ALTER TABLE ONLY public.orders
     ADD CONSTRAINT users_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE RESTRICT ON DELETE RESTRICT NOT VALID;
 
 
---
--- TOC entry 2769 (class 2606 OID 700757)
--- Name: status workflows_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.status
-    ADD CONSTRAINT workflows_fkey FOREIGN KEY (workflow_id) REFERENCES public.workflows(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
--- Completed on 2020-09-09 15:51:14
+-- Completed on 2020-09-12 22:25:47
 
 --
 -- PostgreSQL database dump complete
