@@ -11,6 +11,7 @@ var db *sql.DB
 func Initialize() {
 	db = hd.Db
 	createSeq()
+	createDropTable()
 	createTable()
 	createAdmin()
 	createBeer()
@@ -85,6 +86,12 @@ func createFKey() {
 	db.Exec("ALTER TABLE ONLY public.features_roles " +
 		" ADD CONSTRAINT features_fkey FOREIGN KEY (feature_id)" +
 		" REFERENCES public.features (id) MATCH SIMPLE" +
+		" ON UPDATE RESTRICT" +
+		" ON DELETE RESTRICT")
+
+	db.Exec("ALTER TABLE ONLY public.users " +
+		" ADD CONSTRAINT roles_fkey FOREIGN KEY (role_id)" +
+		" REFERENCES public.roles (id) MATCH SIMPLE" +
 		" ON UPDATE RESTRICT" +
 		" ON DELETE RESTRICT")
 
@@ -256,6 +263,10 @@ func createSeq() {
 		" CACHE 1")
 }
 
+func createDropTable() {
+	db.Exec(" DROP TABLE public.users")
+}
+
 func createTable() {
 	// Table ACTIVITIES
 	db.Exec(" CREATE TABLE public.activities (" +
@@ -326,6 +337,7 @@ func createTable() {
 			" password character varying(255) NOT NULL," +
 			" email character varying(255) NOT NULL," +
 			" mobile character varying(255) NOT NULL," +
+			" role_id integer," +
 			" name character varying(255))")
 	// Table ITEMS
 	db.Exec(
