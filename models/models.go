@@ -21,9 +21,12 @@ type Feature struct {
 }
 
 type Workflow struct {
-	Order int
-	Id    int64  `json:"id"`
-	Name  string `json:"name"`
+	Order      int
+	Id         int64    `json:"id"`
+	Name       string   `json:"name"`
+	EntityType string   `json:"entity"`
+	StartAt    NullTime `json:"startAt`
+	EndAt      NullTime `json:"endAt"`
 }
 
 type Action struct {

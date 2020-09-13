@@ -30,6 +30,9 @@
                 <th>Ord</th>
                 <th>Id</th>
                 <th>Nome</th>
+                <th>Entidade</th>
+                <th>Inicia em</th>
+                <th>Termina em</th>
 				{{if $allowed}}
 				<th>Ações</th>
 				{{end}}
@@ -41,6 +44,9 @@
                 <td>#{{$workflow.Order}}</td>
                 <td>{{$workflow.Id}}</td>
                 <td>{{$workflow.Name}}</td>
+                <td>{{$workflow.EntityType}}</td>
+                <td>{{$workflow.StartAt}}</td>
+                <td>{{$workflow.EndAt}}</td>
 				{{if $allowed}}
                 <td>
                     <button class="w3-btn w3-teal" onclick="updateworkflow(this);">Editar</button>

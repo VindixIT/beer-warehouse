@@ -109,7 +109,7 @@ func DeleteWorkflowHandler(w http.ResponseWriter, r *http.Request) {
 func ListWorkflowsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("List Workflows")
 	sec.IsAuthenticated(w, r)
-	query := "SELECT id, name FROM workflows order by id asc"
+	query := "SELECT id, name, entity_type, start_at, end_at FROM workflows order by id asc"
 	log.Println("List WF -> Query: " + query)
 	rows, err := Db.Query(query)
 	sec.CheckInternalServerError(err, w)
@@ -117,7 +117,7 @@ func ListWorkflowsHandler(w http.ResponseWriter, r *http.Request) {
 	var workflow mdl.Workflow
 	var i = 1
 	for rows.Next() {
-		err = rows.Scan(&workflow.Id, &workflow.Name)
+		err = rows.Scan(&workflow.Id, &workflow.Name, &workflow.EntityType, &workflow.StartAt, &workflow.EndAt)
 		sec.CheckInternalServerError(err, w)
 		workflow.Order = i
 		i++

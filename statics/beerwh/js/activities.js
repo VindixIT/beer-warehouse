@@ -96,8 +96,7 @@ function editarActivity(){
 	var expActionId = ea.options[ea.selectedIndex].value;
 	var expActionName = ea.options[ea.selectedIndex].text;
 	var roles = getSelectedRoles(document.getElementById('roles-edit'));
-	var roles = getSelectedRoles(document.getElementById('roles-create'));
-	var roleNames = getSelectedRoleNames(document.getElementById('roles-create'));
+	var roleNames = getSelectedRoleNames(document.getElementById('roles-edit'));
 	var order = document.getElementById('order-edit').value;
 	activity = new Activity(id, actionId, actionName, startAt, endAt, expTime, expActionId, expActionName, roles, roleNames);
 	activities[order]=activity;
@@ -206,8 +205,8 @@ function updateActRow(tableID, order){
 	row.childNodes[3].innerText = activities[order].expTime;
 	row.childNodes[4].innerText = activities[order].expActionName;
 	row.childNodes[4].innerHTML = '<input type="hidden" name="expActionId" value="'+activities[order].expActionId+'"/>'+row.childNodes[4].innerHTML;
-	row.childNodes[5].innerHTML = activities[order].roles;
-	row.childNodes[5].innerHTML = '<input type="hidden" name="roles" value="'+activities[order].rolesroleNames+'"/>'+row.childNodes[5].innerHTML;
+	row.childNodes[5].innerHTML = activities[order].roleNames;
+	row.childNodes[5].innerHTML = '<input type="hidden" name="roles" value="'+activities[order].roles+'"/>'+row.childNodes[5].innerHTML;
 }
 
 function getSelectedRoles(select) {
