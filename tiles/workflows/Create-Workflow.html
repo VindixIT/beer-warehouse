@@ -11,6 +11,7 @@
             </div>
 
             <form class="w3-container" action="/createWorkflow" method="post">
+				<input type="hidden" name="Id" id="WorkflowIdForInsert" value="0">
                 <label class="w3-label">Nome</label>
                 <input class="w3-input" type="text" name="Name" value="">
 				<br>
@@ -39,10 +40,10 @@
 		            <thead>
 		            <tr>
 		                <th>Ação</th>
+		                <th>Status Origem</th>
+		                <th>Status Destino</th>
 		                <th>Inicia Em</th>
 		                <th>Termina Em</th>
-		                <th>Dias Expirado</th>
-		                <th>Ação Expirado</th>
 		                <th>Papéis</th>
 						<th>Ações</th>
 		            </tr>

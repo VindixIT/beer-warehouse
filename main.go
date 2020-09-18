@@ -80,6 +80,7 @@ func main() {
 	http.HandleFunc("/loadItemsByOrderId", hd.LoadItemsByOrderId)
 	http.HandleFunc("/loadFeaturesByRoleId", hd.LoadFeaturesByRoleId)
 	http.HandleFunc("/loadRolesByActionId", hd.LoadRolesByActionId)
+	http.HandleFunc("/loadActivitiesByWorkflowId", hd.LoadActivitiesByWorkflowId)
 	// ----------------- STATICS
 	http.Handle("/statics/",
 		http.StripPrefix("/statics/", http.FileServer(http.Dir("./statics"))),

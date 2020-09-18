@@ -132,6 +132,7 @@ func ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 	var page mdl.PageUsers
 	page.Users = users
 	page.Roles = roles
+	page.AppName = mdl.AppName
 	page.Title = "Usuários"
 	page.LoggedUser = BuildLoggedUser(GetUserInCookie(w, r))
 	var tmpl = template.Must(template.ParseGlob("tiles/users/*"))

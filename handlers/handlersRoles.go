@@ -169,6 +169,7 @@ func ListRolesHandler(w http.ResponseWriter, r *http.Request) {
 	var page mdl.PageRoles
 	page.Roles = roles
 	page.Features = features
+	page.AppName = mdl.AppName
 	page.Title = "Papéis"
 	page.LoggedUser = BuildLoggedUser(GetUserInCookie(w, r))
 	var tmpl = template.Must(template.ParseGlob("tiles/roles/*"))

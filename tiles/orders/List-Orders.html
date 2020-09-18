@@ -6,10 +6,10 @@
 		    <div class="aria">
 				<div style="margin-top: 6px;text-align: left;z-index:1">
 		    		<a style="font-size:28px;cursor:pointer" onclick="navGadget()">
-						&#9776; Beer Warehouse
+						&#9776; {{.AppName}}
 		    		</a>
 				</div>
-				<div style="text-align: center;margin: auto;position:absolute;width:100%;z-index:0">
+				<div style="text-align: center;margin: auto;position:absolute;width:90%;z-index:0">
 				    <h3>{{.Title}}</h3>
 				</div>
 				<div style="margin-top: 10px;text-align: right;z-index:1">
@@ -32,7 +32,8 @@
                 <th>Id</th>
                 <th>Cliente</th>
                 <th>Pedido em</th>
-                <th>Retirado em</th>
+                <th>Retirar em</th>
+                <th>Status</th>
 				{{if $allowed}}
 				<th>Ações</th>
 				{{end}}
@@ -43,7 +44,7 @@
             {{range $index, $order := .Orders }}
 				{{if or (eq $index 0) (ne $auxData $order.CTakeOutAt)}}
 	            <tr>
-	                <td colspan="10" bgcolor="lightgreen" style="font-size:1.2em;text-align:left">{{$order.CTakeOutAt}}</td>
+	                <td colspan="10" bgcolor="#00A4FF" style="font-size:1.2em;text-align:left">{{$order.CTakeOutAt}}</td>
             	</tr>
 				{{$auxData = $order.CTakeOutAt }}
 				{{end}}
@@ -53,6 +54,7 @@
 	                <td>{{$order.UserName}}<input type="hidden" value="{{$order.UserId}}"></td>
 	                <td>{{$order.COrderedDateTime}}</td>
 	                <td>{{$order.CTakeOutDateTime}}</td>
+	                <td>{{$order.CStatus}}<input type="hidden" value="{{$order.StatusId}}"></td>
 					{{if $allowed}}
 	                <td>
 	                    <button class="w3-btn w3-teal" onclick="contexto='edit';updateorder(this);">Editar</button>

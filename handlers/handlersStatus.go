@@ -56,7 +56,7 @@ func DeleteStatusHandler(w http.ResponseWriter, r *http.Request) {
 		id := r.FormValue("Id")
 		sqlStatement := "DELETE FROM status WHERE id=$1"
 		deleteForm, err := Db.Prepare(sqlStatement)
-		deleteForm.Exec(id)
+		_, err = deleteForm.Exec(id)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -83,6 +83,7 @@ func ListStatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var page mdl.PageStatus
 	page.Status = status_array
+	page.AppName = mdl.AppName
 	page.Title = "Status"
 	page.LoggedUser = BuildLoggedUser(GetUserInCookie(w, r))
 	var tmpl = template.Must(template.ParseGlob("tiles/status/*"))

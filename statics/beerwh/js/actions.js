@@ -1,3 +1,25 @@
+class Action {
+	constructor(id, origin, destination) {
+		this.id = id;
+		this.origin = origin;
+		this.destination = destination;
+	}
+}
+
+function getActionStatus(type, actionId){
+	let acts = actions_array;
+	for(n=0;n<acts.length;n++){
+		if(acts[n].id == actionId){
+			if('origin' == type){
+				return acts[n].origin;
+			} else {
+				return acts[n].destination;
+			}
+		}
+	}
+}
+
+
 function updateaction(e) {
 	resetActionsEditForm();
     var editForm = document.getElementById('edit-form');

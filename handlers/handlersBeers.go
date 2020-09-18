@@ -85,6 +85,7 @@ func ListBeersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	var page mdl.PageBeers
 	page.Beers = beers
+	page.AppName = mdl.AppName
 	page.Title = "Cervejas"
 	page.LoggedUser = BuildLoggedUser(GetUserInCookie(w, r))
 	var tmpl = template.Must(template.ParseGlob("tiles/beers/*"))

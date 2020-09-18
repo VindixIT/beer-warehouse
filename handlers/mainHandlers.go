@@ -53,7 +53,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		rows.Scan(&feature.Id, &feature.Code)
 		features = append(features, feature)
-		//log.Println(feature)
+		log.Println(feature)
 	}
 	user.Features = features
 	sec.Authenticated = true
@@ -62,7 +62,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Abrindo o Cookie
 	savedUser := GetUserInCookie(w, r)
 	log.Println("MAIN Saved User is " + savedUser.Username)
-	http.Redirect(w, r, route.WorkflowsRoute, 301)
+	http.Redirect(w, r, route.OrdersRoute, 301)
 }
 
 func GetUserInCookie(w http.ResponseWriter, r *http.Request) mdl.User {
@@ -89,7 +89,7 @@ func BuildLoggedUser(user mdl.User) mdl.LoggedUser {
 	loggedUser.HasPermission = func(feature string) bool {
 		for _, value := range user.Features {
 			if value.Code == feature {
-				// log.Println("PASSOU: " + feature)
+				log.Println("PASSOU: " + feature)
 				return true
 			}
 		}

@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+var AppName = "BeerWH"
+
+type Error struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
 type Role struct {
 	Order    int
 	Id       int64  `json:"id"`
@@ -22,11 +29,29 @@ type Feature struct {
 
 type Workflow struct {
 	Order      int
-	Id         int64    `json:"id"`
-	Name       string   `json:"name"`
-	EntityType string   `json:"entity"`
-	StartAt    NullTime `json:"startAt`
-	EndAt      NullTime `json:"endAt"`
+	Id         int64  `json:"id"`
+	Name       string `json:"name"`
+	EntityType string `json:"entity"`
+	StartAt    string `json:"startAt`
+	EndAt      string `json:"endAt"`
+}
+
+type Activity struct {
+	Order                int    `json:"order"`
+	Id                   int64  `json:"id"`
+	WorkflowId           int64  `json:"wid"`
+	ActionId             int64  `json:"actionId"`
+	ActionName           string `json:"actionName"`
+	ExpirationActionId   int64  `json:"expActionId"`
+	ExpirationActionName string `json:"expActionName"`
+	ExpirationTimeDays   int    `json:"expTime"`
+	CStartAt             string `json:"startAt"`
+	CEndAt               string `json:"endAt"`
+	CRoles               string `json:"roles"`
+	CRoleNames           string `json:"roleNames"`
+	Roles                []Role `json:"roles_array"`
+	CFeatures            string `json:"features"`
+	CFeatureNames        string `json:"featureNames"`
 }
 
 type Action struct {
@@ -57,9 +82,10 @@ type Beer struct {
 }
 
 type Item struct {
-	Order     int
+	Order     int     `json:"order"`
 	Id        int64   `json:"id"`
 	IdOrder   int64   `json:"orderId"`
+	Beer      string  `json:"beer"`
 	BeerId    int64   `json:"beerId"`
 	BeerName  string  `json:"beerName"`
 	Qtt       float64 `json:"qtd"`
@@ -78,13 +104,14 @@ type Order struct {
 	CTakeOutDateTime string    `json:"ctakeOutDateTime`
 	COrderedAt       string    `json:"corderedAt`
 	CTakeOutAt       string    `json:"ctakeOutAt`
+	StatusId         int64     `json:"statusId`
+	CStatus          string    `json:"cStatus`
 }
 
 type NullTime struct {
 	pq.NullTime
 }
 
-// NÃO SEI SE VOU USAR AINDA
 type LoggedUser struct {
 	User          User
 	HasPermission func(string) bool
@@ -111,12 +138,14 @@ type Measure struct {
 }
 
 type PageMeasures struct {
+	AppName    string
 	Title      string
 	Measures   []Measure
 	LoggedUser LoggedUser
 }
 
 type PageOrders struct {
+	AppName    string
 	Title      string
 	UserId     int
 	Orders     []Order
@@ -126,6 +155,7 @@ type PageOrders struct {
 }
 
 type PageUsers struct {
+	AppName    string
 	Title      string
 	Users      []User
 	Roles      []Role
@@ -133,12 +163,14 @@ type PageUsers struct {
 }
 
 type PageBeers struct {
+	AppName    string
 	Title      string
 	Beers      []Beer
 	LoggedUser LoggedUser
 }
 
 type PageRoles struct {
+	AppName    string
 	Title      string
 	Roles      []Role
 	Features   []Feature
@@ -146,18 +178,21 @@ type PageRoles struct {
 }
 
 type PageFeatures struct {
+	AppName    string
 	Title      string
 	Features   []Feature
 	LoggedUser LoggedUser
 }
 
 type PageStatus struct {
+	AppName    string
 	Title      string
 	Status     []Status
 	LoggedUser LoggedUser
 }
 
 type PageAction struct {
+	AppName    string
 	Title      string
 	Statuss    []Status
 	Actions    []Action
@@ -165,7 +200,9 @@ type PageAction struct {
 }
 
 type PageWorkflow struct {
+	AppName    string
 	Title      string
+	Features   []Feature
 	Actions    []Action
 	Roles      []Role
 	Workflows  []Workflow

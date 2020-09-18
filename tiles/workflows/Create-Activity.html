@@ -13,7 +13,6 @@
                 <label class="w3-label">Ação</label>
 				<br>	
 				<script>
-					var ar = [];
 					var i = 0;
 				</script>					
 	            <select class="w3-input" id="action-create" name="action-create">
@@ -23,12 +22,22 @@
 						{{$action.Name}}
 					</option>
 					<script>
-						ar[i] = "{{$action.Id}}";
+						actions_array[i] = new Action("{{$action.Id}}","{{$action.Origin}}","{{$action.Destination}}");
 						i++;
 					</script>
 	            	{{end}}
 	            </select>
-                <label class="w3-label">Inicia em</label>
+				<label class="w3-label">Funcionalidades Disponíveis</label>
+				<br>
+	            <select class="w3-input" name="FeaturesForInsert" id="features-create" multiple style="width:100%">
+					{{range $index, $feature := .Features }}
+		                <option value="{{$feature.Id}}">
+							{{$feature.Name}}
+						</option>
+		            {{end}}
+	            </select>
+				<br>                
+				<label class="w3-label">Inicia em</label>
                 <input class="w3-input" type="date" id="start-at-create" value="">
                 <label class="w3-label">Termina em</label>
                 <input class="w3-input" type="date" id="end-at-create" value="">
@@ -57,7 +66,7 @@
                 <button 
 					class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" 
 					type="button"
-					onclick="criarActivity()"
+					onclick="criarActivity();"
 					>Criar
 				</button>
             </form>

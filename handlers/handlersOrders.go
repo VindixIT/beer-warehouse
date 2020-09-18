@@ -4,6 +4,7 @@ import (
 	mdl "beerwh/models"
 	route "beerwh/routes"
 	sec "beerwh/security"
+	"database/sql"
 	"encoding/json"
 	"html/template"
 	"log"
@@ -15,7 +16,13 @@ import (
 func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	sec.IsAuthenticated(w, r)
 	log.Println("Create Order")
-	// statusId := GetStartStatus("order")
+	statusId := GetStartStatus("order")
+	snippet1 := ""
+	snippet2 := ""
+	if statusId != 0 {
+		snippet1 = ", status_id"
+		snippet2 = ", $4"
+	}
 	if r.Method == "POST" {
 		userId := r.FormValue("UserForInsert")
 		orderedDate := r.FormValue("OrderDateForInsert")
@@ -27,21 +34,31 @@ func CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("orderedAt: " + orderedAt)
 		log.Println("takeOutAt: " + takeOutAt)
 		sqlStatement := "INSERT INTO public.orders ( " +
-			" user_id, ordered_at, take_out_at ) " +
-			" VALUES ($1, TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS')) RETURNING id"
+			" user_id, ordered_at, take_out_at " + snippet1 + " ) " +
+			" VALUES ($1, TO_TIMESTAMP($2, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP($3, 'YYYY-MM-DD HH24:MI:SS')" + snippet2 + ") RETURNING id"
 		orderId := 0
-		err := Db.QueryRow(sqlStatement, userId, orderedAt, takeOutAt).Scan(&orderId)
-		sec.CheckInternalServerError(err, w)
-		if err != nil {
-			panic(err.Error())
+		log.Println(statusId)
+		if statusId != 0 {
+			err := Db.QueryRow(sqlStatement, userId, orderedAt, takeOutAt, statusId).Scan(&orderId)
+			sec.CheckInternalServerError(err, w)
+			if err != nil {
+				panic(err.Error())
+			}
+		} else {
+			err := Db.QueryRow(sqlStatement, userId, orderedAt, takeOutAt).Scan(&orderId)
+			sec.CheckInternalServerError(err, w)
+			if err != nil {
+				panic(err.Error())
+			}
 		}
 		for key, value := range r.Form {
 			if strings.HasPrefix(key, "item") {
+				log.Println("value[0]: " + value[0])
 				array := strings.Split(value[0], "#")
-				beerId := strings.Split(array[1], ":")[1]
-				qtd := extraiValor(strings.Split(array[3], ":"))
-				price := extraiValor(strings.Split(array[4], ":"))
-				itemValue := extraiValor(strings.Split(array[5], ":"))
+				beerId := strings.Split(array[4], ":")[1]
+				qtd := extraiValor(strings.Split(array[6], ":"))
+				price := extraiValor(strings.Split(array[7], ":"))
+				itemValue := extraiValor(strings.Split(array[8], ":"))
 				itemId := 0
 				log.Println("beerId: " + beerId)
 				sqlStatement := "INSERT INTO items(order_id, beer_id, quantity, price, item_value) VALUES ($1,$2,$3,$4,$5) RETURNING id"
@@ -131,16 +148,15 @@ func UpdateOrderHandler(w http.ResponseWriter, r *http.Request) {
 		var itemPage mdl.Item
 		for key, value := range r.Form {
 			if strings.HasPrefix(key, "item") {
+				log.Println("update - value[0]: " + value[0])
 				array := strings.Split(value[0], "#")
-				itemid := strings.Split(array[0], ":")[1]
-				beerid := strings.Split(array[1], ":")[1]
-				qtd := extraiValor(strings.Split(array[3], ":"))
-				price := extraiValor(strings.Split(array[4], ":"))
-				itemValue := extraiValor(strings.Split(array[5], ":"))
+				itemid := strings.Split(array[1], ":")[1]
+				itemPage.Beer = strings.Split(array[4], ":")[1]
+				qtd := strings.Split(array[6], ":")[1]
+				price := strings.Split(array[7], ":")[1]
+				itemValue := strings.Split(array[8], ":")[1]
 				n, _ := strconv.ParseInt(itemid, 10, 64)
 				itemPage.Id = n
-				m, _ := strconv.ParseInt(beerid, 10, 64)
-				itemPage.BeerId = m
 				q, _ := strconv.ParseFloat(qtd, 64)
 				itemPage.Qtt = q
 				r, _ := strconv.ParseFloat(price, 64)
@@ -177,7 +193,8 @@ func UpdateOrderHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println("Order Id: " + strconv.FormatInt(item.IdOrder, 10))
 				sqlStatement := "INSERT INTO items(order_id, beer_id, quantity, price, item_value) VALUES ($1,$2,$3,$4,$5) RETURNING id"
 				log.Println(sqlStatement)
-				err := Db.QueryRow(sqlStatement, orderId, item.BeerId, item.Qtt, item.Price, item.ItemValue).Scan(&itemId)
+				log.Println("beerid: " + item.Beer)
+				err := Db.QueryRow(sqlStatement, orderId, item.Beer, item.Qtt, item.Price, item.ItemValue).Scan(&itemId)
 				sec.CheckInternalServerError(err, w)
 				if err != nil {
 					panic(err.Error())
@@ -227,14 +244,17 @@ func ListOrdersHandler(w http.ResponseWriter, r *http.Request) {
 		" coalesce(to_char(a.ordered_at,'DD/MM/YYYY'),'') as c_ordered_date," +
 		" coalesce(to_char(a.take_out_at,'DD/MM/YYYY'),'') as c_takeout_date," +
 		" coalesce(to_char(a.ordered_at,'DD/MM/YYYY HH24:MI:SS'),'') as c_ordered_date_time," +
-		" coalesce(to_char(a.take_out_at,'DD/MM/YYYY HH24:MI:SS'),'') as c_takeout_date_time" +
-		" FROM orders a, users b where a.user_id = b.id order by a.take_out_at desc "
+		" coalesce(to_char(a.take_out_at,'DD/MM/YYYY HH24:MI:SS'),'') as c_takeout_date_time," +
+		" c.id as status_id, coalesce(c.name,'') as status FROM orders a LEFT JOIN users b ON a.user_id = b.id" +
+		" LEFT OUTER JOIN status c ON a.status_id = c.id " +
+		" order by a.take_out_at desc "
 	rows, err := Db.Query(query)
 	log.Println("Query: " + query)
 	sec.CheckInternalServerError(err, w)
 	var orders []mdl.Order
 	var order mdl.Order
 	var i = 1
+	var status sql.NullInt64
 	for rows.Next() {
 		err = rows.Scan(
 			&order.Id,
@@ -246,8 +266,13 @@ func ListOrdersHandler(w http.ResponseWriter, r *http.Request) {
 			&order.CTakeOutAt,
 			&order.COrderedDateTime,
 			&order.CTakeOutDateTime,
+			&status,
+			&order.CStatus,
 		)
 		sec.CheckInternalServerError(err, w)
+		if status.Valid {
+			order.StatusId = status.Int64
+		}
 		order.Order = i
 		i++
 		orders = append(orders, order)
@@ -283,6 +308,7 @@ func ListOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	page.Beers = beers
 	page.Orders = orders
+	page.AppName = mdl.AppName
 	page.Title = "Pedidos"
 	page.LoggedUser = BuildLoggedUser(savedUser)
 	var tmpl = template.Must(template.ParseGlob("tiles/orders/*"))

@@ -64,6 +64,7 @@ function addRow(tableID) {
 	var btnEditar = document.createElement('input');
 	btnEditar.type = "button";
 	btnEditar.className = "w3-btn w3-teal";
+	btnEditar.style = "margin-right: 10px";
 	btnEditar.value = "Editar";
 	btnEditar.onclick = function() {updateitem(btnEditar)};
 	newCell.appendChild(btnEditar);

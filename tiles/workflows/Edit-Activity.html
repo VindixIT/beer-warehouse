@@ -9,7 +9,6 @@
                 <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
                       onclick="document.getElementById('edit-activity-form').style.display='none'">&times;</span>
             </div>
-
             <form class="w3-container">
 				<input type="hidden" id="id-edit" value="">
                 <label class="w3-label">Ação</label>
@@ -30,8 +29,15 @@
 					</script>
 	            	{{end}}
 	            </select>
+				<label class="w3-label">Funcionalidades Disponíveis</label>
 				<br>
-				<br>
+	            <select class="w3-input" name="FeaturesForInsert" id="features-edit" multiple style="width:100%">
+					{{range $index, $feature := .Features }}
+		                <option value="{{$feature.Id}}">
+							{{$feature.Name}}
+						</option>
+		            {{end}}
+	            </select>
                 <label class="w3-label">Inicia em</label>
                 <input class="w3-input" type="date" id="start-at-edit" value="">
                 <label class="w3-label">Termina em</label>
