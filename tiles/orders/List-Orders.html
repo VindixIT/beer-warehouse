@@ -44,7 +44,7 @@
             {{range $index, $order := .Orders }}
 				{{if or (eq $index 0) (ne $auxData $order.CTakeOutAt)}}
 	            <tr>
-	                <td colspan="10" bgcolor="#00A4FF" style="font-size:1.2em;text-align:left">{{$order.CTakeOutAt}}</td>
+	                <td colspan="10" bgcolor="#FFE4B5" style="font-size:1.2em;text-align:left">{{$order.CTakeOutAt}}</td>
             	</tr>
 				{{$auxData = $order.CTakeOutAt }}
 				{{end}}
